@@ -72,12 +72,52 @@ app.get('/checkout/:id', async(req, res) =>{
   res.send(result)
  })
 
+//  orderBook data colect from mongobd 
+
+app.get('/orderBook' , async(req, res) =>{
+  console.log(req.query);
+  let query = {}
+  if (req.query?.email) {
+    query = {email: req.query.email}
+  }
+  const cursor = bookColection.find(query);
+  const result = await cursor.toArray();
+  res.send(result)
+})
+
  app.post('/orderBook', async(req, res) =>{
   const order = req.body;
   console.log(order);
   const result = await bookColection.insertOne(order)
   res.send(result)
  })
+
+
+ app.patch('/orderBook/:id', async(req,res) =>{
+  const id = req.params.id;
+  const filter = {_id: new ObjectId(id)}
+  const updateOrder = req.body;
+  console.log(updateOrder);
+  const updateDoc = {
+    $set: {
+      status: updateOrder.status
+    }
+  }
+
+  const result = await bookColection.updateOne(filter, updateDoc)
+  res.send(result)
+ })
+
+
+ app.delete('/orderBook/:id', async(req, res) =>{
+  const id = req.params.id;
+  const query ={_id : new ObjectId(id)}
+  const result = await bookColection.deleteOne(query)
+  res.send(result)
+ })
+
+
+ 
 
 
 
